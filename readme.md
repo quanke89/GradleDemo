@@ -1,7 +1,7 @@
 # Gradle 学习
-
+Gradle 学习笔记，[学习资料](https://classroom.udacity.com/courses/ud867)
 ## Groovy 相关知识
-1. 以下示例内容来自[udacity](https://github.com/udacity/ud867)
+1. **以下示例内容来自[udacity](https://github.com/udacity/ud867)**
 1. 基础知识
     ```java
     // 常见示例，示例来源: 
@@ -109,5 +109,168 @@
     greetingClosure.delegate = myGroovyGreeter
     greetingClosure() // This works as `greeting` is a property of the delegate
     ```
+
+## Task
+
+1. 依赖关系
+    * 基本关系：单依赖配置
+        - dependsOn: 依赖于另外一个task, 被依赖的task需要先执行
+            ```
+            task putOnSocks {
+                doLast {
+                    println "Putting on Socks."
+                }
+            }
+
+            task putOnShoes {
+                dependsOn "putOnSocks"
+                doLast {
+                    println "Putting on Shoes."
+                }
+            }
+            ```
+        - finalizedBy: 一个任务执行完后，需要跟随执行的任务（终结/尾随任务）
+            ```
+            task eatBreakfast {
+                finalizedBy "brushYourTeeth"
+                doLast{
+                    println "Om nom nom breakfast!"
+                }
+            }
+
+            task brushYourTeeth {
+                doLast {
+                    println "Brushie Brushie Brushie."
+                }
+            }
+            ```
+        - shouldRunAfter: A shouldRunAfter B，意味着：
+            + 只执行task A。 task B 不会执行
+            + 如果taskA，B都需要执行，则需要先执行B，再执行A。
+            ```
+            task takeShower {
+                doLast {
+                    println "Taking a shower."
+                }
+            }
+
+            task putOnFragrance {
+                shouldRunAfter "takeShower"
+                doLast{
+                    println "Smellin' fresh!"
+                }
+            }
+            ```
+    * 多依赖配置
+        ```
+        task getReady {
+            // Remember that when assigning a collection to a property, we need the
+            // equals sign
+            dependsOn = ["takeShower", "eatBreakfast", "putOnShoes"]
+        }
+        // 灵活配置
+        putOnShoes.mustRunAfter takeShower
+        task getEquipped {
+            dependsOn tasks.matching{ task -> task.name.startsWith("putOn")}
+            doLast {
+                println "All geared up!"
+            }
+        }
+        ```
+2. 类型化任务
+    * 特定操作的任务，如文件拷贝、删除、压缩，gradle提供了许多内置的限定类型的任务
+        ```java
+        // 拷贝
+        task copyWeb(type: Copy) {
+            from 'src/web'
+            from('src/docs') {
+                include '*.txt'
+                into 'help'
+            }
+            into 'build/web'
+        }
+        // 压缩
+        task bundleWeb(type: Zip, dependsOn: copyWeb) {
+            baseName = 'web'
+            destinationDir = file('build')
+            
+            from 'build/web'
+            exclude 'images/**'
+        }
+        // 解压
+        task unpackBundle(type: Copy, dependsOn: bundleWeb) {
+            from zipTree('build/web.zip')
+            into 'build/exploded'
+        }
+        // 删除
+        task deleteHelp(type: Delete, dependsOn: copyWeb) {
+            delete 'build/web/help'
+        }
+        ```
+    * 自定义类型任务
+        ```
+        // 定义
+        class HelloNameTask extends DefaultTask {
+            String firstName
+
+            // TaskAction注解说明从类中创建的任务操作
+            @TaskAction
+            void doAction() {
+                println "Hello, $firstName"
+            }
+        }
+        // 使用
+        task helloName(type: HelloNameTask) {
+            firstName = 'Jeremy'
+        }
+
+        ```
+3. 增量构建
+    * 自动增量构建，避免重复构建
+    * Gradle 会跟踪每个任务的输入输出，任务执行前，会保存该任务使用的输入快照。如果一个任务没有任务快照或者快照发生改变，则Gradle会重新执行该任务。同理，如果输入没有发生改变，而且输出自上次任务之后也没被更改过，则Gradle则会跳过任务执行
+4. 脚本参数传递，如下面的`task printGreeting`示例，如何将`greeting`参数值传递到脚本中
+    ```
+    task printGreeting {
+        doLast {
+           println greeting
+        }
+    }
+    ```
+    * `gradle.properties`文件中定义
+        ```
+         greeting = "Hello from a properties file"
+        ```
+    * 命令行直接传递：`gradle printGreeting -Pgreeting="Hello from the command line"`
+    * 脚本内部定义
+        ```
+        ext {
+            greeting = "Hello from inside the build script"
+        }
+        ```
+    * 优先级：脚本内部定义 > 命令行 > `properties`文件
+5. 故障排除和记录
+    * 日志级别，从高到低
+        - ERROR: Error messages, -
+        - QUIET: -q, 包括程序打印信息
+        - WARNING: Warning messages
+        - LIFECYCLE: default, 从当前开始运行的任务构建话费的总时间以及是否构建成功
+        - INFO: -i, 详细介绍每个任务所需的以及其他高级事件
+        - DEBUG: -d, 会输出大量Gradle的内部信息
+    * 输出程序执行stacktrace
+        - gradle -s # 部分堆栈信息
+        - gradle -S # 完全堆栈信息 
+6. 构建生命周期
+    * initialization: 多个项目的构建设置
+    * configuration: 决定运行哪个task，以及task运行顺序
+    * execution: 运行 
+
+
+## 参考文献
+1. [Gradle dsl(Domain-specific language)](https://docs.gradle.org/current/dsl/)
+
+## TODO
+1. 增量构建内部原理
+
+
 
 
