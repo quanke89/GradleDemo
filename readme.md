@@ -3,7 +3,7 @@
 ## Groovy 相关知识
 
 1. 基础知识
-    ```
+    ```groovy
     // 常见示例，示例来源: https://github.com/udacity/ud867
     task groovy {}
     println "Hello Groovy!"
