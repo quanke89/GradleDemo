@@ -302,53 +302,53 @@ Gradle 学习笔记，[学习资料](https://classroom.udacity.com/courses/ud867
             }
         }
         ```
-    2. 依赖配置
-        ```java
-        dependencies {
-            compile 'com.google.guava:guava:18.0'
-            // 与上面的配置等价
-            // compile group: 'com.google.guava', name: 'guava', version: '18.0'
-            // 本地文件
-            compile files('libs/foo.jar', 'libs/bar.jar')
-            // 目录树，依赖多个文件
-            compile fileTree(dir: 'libs', include: '*.jar')
-        }
-        ```
-    3. 依赖报告
-        * `gradle dependencies` 查看项目依赖报告，包括传递依赖
-        * `gradle dependencies --configuration runtime` 查看运行时间配置的依赖
-        * `gradle dependencyInsight --dependency commons-logging` 查看项目中使用的特定依赖，可用于依赖冲突查看
-    4. 自定义依赖配置
-        ```
-        // 自定义依赖配置
-        configurations {
-            custom
-        }
-        dependencies {
-            custom 'com.google.guava:guava:18.0'
-        }
+2. 依赖配置
+    ```java
+    dependencies {
+        compile 'com.google.guava:guava:18.0'
+        // 与上面的配置等价
+        // compile group: 'com.google.guava', name: 'guava', version: '18.0'
+        // 本地文件
+        compile files('libs/foo.jar', 'libs/bar.jar')
+        // 目录树，依赖多个文件
+        compile fileTree(dir: 'libs', include: '*.jar')
+    }
+    ```
+3. 依赖报告
+    + `gradle dependencies` 查看项目依赖报告，包括传递依赖
+    + `gradle dependencies --configuration runtime` 查看运行时间配置的依赖
+    + `gradle dependencyInsight --dependency commons-logging` 查看项目中使用的特定依赖，可用于依赖冲突查看
+4. 自定义依赖配置
+    ```
+    // 自定义依赖配置
+    configurations {
+        custom
+    }
+    dependencies {
+        custom 'com.google.guava:guava:18.0'
+    }
 
-        // compile阶段依赖会在testCompile阶段继续使用，有种“继承”的感觉
-        dependencies {
-            compile 'commons-logging:commons-logging:1.1.3'
-            testCompile 'junit:junit:4.12'
+    // compile阶段依赖会在testCompile阶段继续使用，有种“继承”的感觉
+    dependencies {
+        compile 'commons-logging:commons-logging:1.1.3'
+        testCompile 'junit:junit:4.12'
+    }
+    ```
+5. Test
+    + `testCompile 'junit:junit:4.12'` 添加合适的测试依赖
+    + `gradle test` test构建，自动执行test代码
+    + `build/reports/tests/index.html` 自动生成的test报告
+6. [插件检索](https://plugins.gradle.org/)
+7. wrapper 意味着Gradle版本也是版本控件，考证所有人的gradle版本是一致的
+    + `gradle wrapper` 生成Gradle wrapper
+    + wrapper使用
+        * `./gradlew tasks`
+    + wrapper 配置gradle版本
+        ```
+        wrapper {
+            gradleVersion = '2.14.1'
         }
         ```
-    5. Test
-        * `testCompile 'junit:junit:4.12'` 添加合适的测试依赖
-        * `gradle test` test构建，自动执行test代码
-        * `build/reports/tests/index.html` 自动生成的test报告
-    6. [插件检索](https://plugins.gradle.org/)
-    7. wrapper 意味着Gradle版本也是版本控件，考证所有人的gradle版本是一致的
-        * `gradle wrapper` 生成Gradle wrapper
-        * wrapper使用
-            - `./gradlew tasks`
-        * wrapper 配置gradle版本
-            ```
-            wrapper {
-                gradleVersion = '2.14.1'
-            }
-            ```
 
 ## 参考文献
 1. [Gradle dsl(Domain-specific language)](https://docs.gradle.org/current/dsl/)
