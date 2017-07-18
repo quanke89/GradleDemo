@@ -1,5 +1,8 @@
 # Gradle 学习
-Gradle 学习笔记，[学习资料](https://classroom.udacity.com/courses/ud867)
+Gradle 学习笔记
+1. [学习资料1-优达学城Gradle课程](https://classroom.udacity.com/courses/ud867)
+2. [Gradle学习系列](http://www.cnblogs.com/davenkin/p/gradle-learning-1.html)
+
 ## Groovy 相关知识
 1. **以下示例内容来自[udacity](https://github.com/udacity/ud867)**
 1. 基础知识
