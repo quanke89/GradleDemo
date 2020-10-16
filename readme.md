@@ -1,4 +1,4 @@
-# Gradle 学习
+## Gradle 学习
 Gradle 学习笔记
 1. [学习资料1-优达学城Gradle课程](https://classroom.udacity.com/courses/ud867)
 2. [Gradle学习系列](http://www.cnblogs.com/davenkin/p/gradle-learning-1.html)
